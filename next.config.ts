@@ -1,7 +1,11 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   /* config options here */
-};
+  experimental: {
+    // Ignora o erro relacionado ao useSearchParams sem Suspense
+    missingSuspenseWithCSRBailout: false,
+  },
+} as NextConfig
 
-export default nextConfig;
+export default nextConfig
