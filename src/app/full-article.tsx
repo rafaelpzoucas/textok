@@ -1,16 +1,18 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { mockAuthors } from "@/lib/mocks";
-import { ArticleSchema } from "@/schemas/article";
-import { z } from "zod";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { mockAuthors } from '@/lib/mocks'
+import { ArticleSchema } from '@/schemas/article'
+import { z } from 'zod'
 
-export function FullArticle({ article }: { article?: z.infer<typeof ArticleSchema>}) {
-  const author = mockAuthors.find(author => author.id === article?.author_id)
+export function FullArticle({
+  article,
+}: {
+  article?: z.infer<typeof ArticleSchema>
+}) {
+  const author = mockAuthors.find((author) => author.id === article?.author_id)
 
   return (
     <div className="p-8 space-y-6">
-      <h1 className="text-4xl font-bold">
-        {article?.title}
-      </h1>
+      <h1 className="text-4xl font-bold">{article?.title}</h1>
 
       <p className="text-2xl text-muted-foreground">{article?.body}</p>
 
@@ -22,8 +24,8 @@ export function FullArticle({ article }: { article?: z.infer<typeof ArticleSchem
           </Avatar>
 
           <div className="flex flex-col">
-          <p className="text-xl font-bold">{author?.name}</p>
-          <span className="text-muted-foreground">{author?.bio}</span>
+            <p className="text-xl font-bold">{author?.name}</p>
+            <span className="text-muted-foreground">{author?.bio}</span>
           </div>
         </div>
       </footer>

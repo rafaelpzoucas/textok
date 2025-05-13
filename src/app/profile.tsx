@@ -1,10 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AuthorSchema } from "@/schemas/author";
-import { z } from "zod";
-import { AuthorArticles } from "./author-articles";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { AuthorSchema } from '@/schemas/author'
+import { z } from 'zod'
+import { AuthorArticles } from './author-articles'
 
-export function Profile({ author }: { author?: z.infer<typeof AuthorSchema>}) {
-
+export function Profile({ author }: { author?: z.infer<typeof AuthorSchema> }) {
   return (
     <div className="flex flex-col gap-6 w-full h-full p-8">
       <div className="flex flex-col gap-4">
@@ -14,8 +13,8 @@ export function Profile({ author }: { author?: z.infer<typeof AuthorSchema>}) {
         </Avatar>
 
         <div className="flex flex-col">
-        <p className="text-xl font-bold">{author?.name}</p>
-        <span className="text-muted-foreground">{author?.bio}</span>
+          <p className="text-xl font-bold">{author?.name}</p>
+          <span className="text-muted-foreground">{author?.bio}</span>
         </div>
       </div>
 

@@ -14,7 +14,7 @@ export function VerticalScroll() {
     dragFree: false,
     loop: true,
   })
-  
+
   const wheelTimeout = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
@@ -67,12 +67,9 @@ export function VerticalScroll() {
   }, [emblaApi])
 
   return (
-    <div
-      ref={viewportRef}
-      className="overflow-hidden h-dvh w-full touch-pan-y"
-    >
+    <div ref={viewportRef} className="overflow-hidden h-dvh w-full touch-pan-y">
       <div className="flex flex-col h-full px-8">
-        {mockArticles.map(article => (
+        {mockArticles.map((article) => (
           <FeedArticle key={article.id} article={article} />
         ))}
       </div>
