@@ -2,7 +2,7 @@
 
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
-import { mockArticles } from "@/schemas/article";
+import { mockArticles, mockAuthors } from "@/lib/mocks";
 import { useSearchParams } from "next/navigation";
 import { FullArticle } from "./full-article";
 import { Profile } from "./profile";
@@ -13,6 +13,7 @@ export default function Home() {
   const slug = searchParams.get('article')
 
   const selectedArticle = mockArticles.find(article => article.slug === slug)
+  const selectedAuthor = mockAuthors.find(author => author.id === selectedArticle?.author_id)
 
   return (
     <Carousel opts={{ loop: false }}>
@@ -24,7 +25,7 @@ export default function Home() {
           <FullArticle article={selectedArticle} />
         </CarouselItem>
         <CarouselItem className="h-screen w-full">
-          <Profile />
+          <Profile author={selectedAuthor} />
         </CarouselItem>
       </CarouselContent>
     </Carousel>

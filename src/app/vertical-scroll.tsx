@@ -1,6 +1,6 @@
 'use client'
 
-import { mockArticles } from '@/schemas/article'
+import { mockArticles } from '@/lib/mocks'
 import useEmblaCarousel from 'embla-carousel-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
