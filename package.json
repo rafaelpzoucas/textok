@@ -12,6 +12,7 @@
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.9",
     "@radix-ui/react-dialog": "^1.1.13",
+    "@radix-ui/react-scroll-area": "^1.2.8",
     "@radix-ui/react-slot": "^1.2.2",
     "@rocketseat/eslint-config": "^2.2.2",
     "@use-gesture/react": "^10.3.1",
