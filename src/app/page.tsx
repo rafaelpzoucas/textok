@@ -1,5 +1,5 @@
-import { CarouselLayout } from './carousel-layout'
+import { Feed } from './feed'
 
 export default function Home() {
-  return <CarouselLayout />
+  return <Feed />
 }

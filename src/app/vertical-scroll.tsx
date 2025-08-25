@@ -1,78 +1,117 @@
 'use client'
 
-import { mockArticles } from '@/lib/mocks'
+import { Content } from '@/features/contents/schemas'
+import type { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
-import { FeedArticle } from './feed-article'
+import { FeedContent } from './feed-content'
 
-export function VerticalScroll() {
+interface VerticalScrollProps {
+  contents: Content[]
+  hasNextPage: boolean
+  isFetchingNextPage: boolean
+  fetchNextPage: () => void
+}
+
+export function VerticalScroll({
+  contents,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
+}: VerticalScrollProps) {
   const router = useRouter()
 
-  const [viewportRef, emblaApi] = useEmblaCarousel({
-    axis: 'y',
-    dragFree: false,
-    loop: true,
-  })
+  // refs para evitar rebind de listeners
+  const contentsRef = useRef(contents)
+  const hasNextPageRef = useRef(hasNextPage)
+  const isFetchingNextPageRef = useRef(isFetchingNextPage)
+  const fetchNextPageRef = useRef(fetchNextPage)
 
-  const wheelTimeout = useRef<NodeJS.Timeout | null>(null)
+  useEffect(() => {
+    contentsRef.current = contents
+  }, [contents])
+  useEffect(() => {
+    hasNextPageRef.current = hasNextPage
+  }, [hasNextPage])
+  useEffect(() => {
+    isFetchingNextPageRef.current = isFetchingNextPage
+  }, [isFetchingNextPage])
+  useEffect(() => {
+    fetchNextPageRef.current = fetchNextPage
+  }, [fetchNextPage])
+
+  const options: EmblaOptionsType = {
+    axis: 'y',
+    loop: false,
+    dragFree: false,
+    containScroll: 'trimSnaps',
+    skipSnaps: false,
+    duration: 25,
+  }
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(options)
 
   useEffect(() => {
     if (!emblaApi) return
 
-    // Função que será chamada sempre que o slide mudar
-    const onSelect = () => {
-      const selectedIndex = emblaApi.selectedScrollSnap()
-      const selectedArticle = mockArticles[selectedIndex] // Pegando o artigo baseado no índice
-      if (selectedArticle) {
-        router.push(`?article=${selectedArticle.slug}`)
+    const onSelect = async () => {
+      const index = emblaApi.selectedScrollSnap()
+
+      const list = contentsRef.current
+      const item = list[index]
+      if (item) {
+        router.push(`?username=${item.owner_username}&slug=${item.slug}`, {
+          scroll: false,
+        })
+      }
+
+      // dispara prefetch quando estiver nos últimos 3 itens
+      const nearEnd = index >= list.length - 3
+      if (nearEnd && hasNextPageRef.current && !isFetchingNextPageRef.current) {
+        await fetchNextPageRef.current()
       }
     }
 
-    // Chama onSelect imediatamente para console.log o primeiro artigo
+    emblaApi.on('select', onSelect)
+    // disparo inicial
     onSelect()
 
-    // Adiciona o ouvinte de evento para o slide mudar
-    emblaApi.on('select', onSelect)
-
-    const onWheel = (event: WheelEvent) => {
-      // ignora scroll horizontal
-      if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return
-
-      event.preventDefault()
-
-      // Evita múltiplos scrolls com um gesto só
-      if (wheelTimeout.current) return
-
-      const direction = event.deltaY > 0 ? 1 : -1
-      const nextIndex = emblaApi.selectedScrollSnap() + direction
-
-      if (nextIndex >= 0 && nextIndex < emblaApi.scrollSnapList().length) {
-        emblaApi.scrollTo(nextIndex)
-      }
-
-      wheelTimeout.current = setTimeout(() => {
-        wheelTimeout.current = null
-      }, 500) // controla sensibilidade do gesto
-    }
-
-    const node = emblaApi.containerNode()
-    node.addEventListener('wheel', onWheel, { passive: false })
-
     return () => {
-      // Limpeza dos eventos
       emblaApi.off('select', onSelect)
-      node.removeEventListener('wheel', onWheel)
     }
-  }, [emblaApi])
+  }, [emblaApi, router])
+
+  // reinit quando a lista cresce
+  useEffect(() => {
+    if (emblaApi && contents.length > 0) {
+      emblaApi.reInit()
+    }
+  }, [emblaApi, contents.length])
 
   return (
-    <div ref={viewportRef} className="overflow-hidden h-dvh w-full touch-pan-y">
-      <div className="flex flex-col h-full px-8">
-        {mockArticles.map((article) => (
-          <FeedArticle key={article.id} article={article} />
-        ))}
+    <div className="h-screen overflow-hidden relative">
+      <div className="embla h-full" ref={emblaRef}>
+        <div className="embla__container h-full flex flex-col">
+          {contents.map((content, index) => (
+            <div
+              key={index}
+              className="embla__slide h-screen w-full flex-shrink-0"
+            >
+              <FeedContent content={content} />
+            </div>
+          ))}
+        </div>
       </div>
+
+      {isFetchingNextPage && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50">
+          <div className="flex items-center space-x-2 bg-background/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm font-medium">Carregando mais...</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
