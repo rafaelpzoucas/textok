@@ -15,6 +15,7 @@
     "@radix-ui/react-scroll-area": "^1.2.8",
     "@radix-ui/react-slot": "^1.2.2",
     "@rocketseat/eslint-config": "^2.2.2",
+    "@tanstack/react-query": "^5.85.5",
     "@use-gesture/react": "^10.3.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
