@@ -70,7 +70,7 @@ export function Markdown({
         '[&_li]:leading-relaxed',
 
         // Links - Adicionado break-all para URLs longas
-        '[&_a]:text-primary hover:[&_a]:text-primary/80 [&_a]:break-all',
+        '[&_a]:text-primary/70 [&_a]:font-bold hover:[&_a]:text-primary/60 [&_a]:break-all',
 
         // Code
         '[&_code]:bg-muted [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono ',

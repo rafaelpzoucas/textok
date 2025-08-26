@@ -10,11 +10,11 @@ export function ContentActions({
 }) {
   return (
     <footer className="flex flex-row items-center justify-between mt-4">
-      <span className="flex flex-row">
+      <span className="flex flex-row bg-secondary/50 rounded-md">
         <Button variant="ghost" size="icon">
           <ChevronUp />
         </Button>
-        <div className="flex items-center justify-center px-1 text-primary w-8">
+        <div className="flex items-center justify-center px-1 text-primary font-bold w-8">
           {content?.tabcoins}
         </div>
         <Button variant="ghost" size="icon">
@@ -23,12 +23,12 @@ export function ContentActions({
       </span>
 
       <div className="flex flex-row items-center gap-2">
-        <Button variant="secondary">
+        <Button variant="secondary" className="bg-secondary/50">
           <CornerDownRight />
           Responder
         </Button>
 
-        <Button variant="secondary" size="icon">
+        <Button variant="secondary" size="icon" className="bg-secondary/50">
           <Share />
         </Button>
       </div>
