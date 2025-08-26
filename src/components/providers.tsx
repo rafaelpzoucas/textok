@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { useState } from 'react'
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -20,7 +21,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <NuqsAdapter>{children}</NuqsAdapter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )

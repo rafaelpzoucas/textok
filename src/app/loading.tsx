@@ -6,8 +6,8 @@ export default function Loading() {
       <Image
         src="/globe.svg"
         alt=""
-        width={250}
-        height={250}
+        width={100}
+        height={100}
         className="animate-bounce"
       />
     </div>
