@@ -57,7 +57,7 @@ export function FullContent() {
                 <a
                   href={content?.source_url}
                   className={cn(
-                    'px-0 font-bold break-all hyphens-auto text-left min-w-0 text-primary hover:text-primary/80',
+                    'px-0 font-bold break-all hyphens-auto text-left min-w-0 w-fit text-primary hover:text-primary/80',
                   )}
                   target="_blank"
                   rel="noopener noreferrer"

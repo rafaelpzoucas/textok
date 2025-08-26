@@ -1,9 +1,9 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { fetchTabnewsContentBySlug, fetchTabnewsContents } from './read'
-import { Content } from './schemas'
+import { ContentType } from './schemas'
 
 export const useInfiniteContents = () => {
-  return useInfiniteQuery<Content[], Error>({
+  return useInfiniteQuery<ContentType[], Error>({
     queryKey: ['tabnews-contents-infinite'],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await fetchTabnewsContents(pageParam as number)
@@ -28,7 +28,7 @@ export const useInfiniteContents = () => {
 }
 
 export const useReadContents = (page: number) => {
-  return useQuery<Content[]>({
+  return useQuery<ContentType[]>({
     queryKey: ['tabnews-contents', page],
     queryFn: async () => {
       const res = await fetchTabnewsContents(page)
@@ -45,7 +45,7 @@ export const useReadContents = (page: number) => {
 }
 
 export const useReadContentBySlug = (username: string, slug: string) => {
-  return useQuery<Content>({
+  return useQuery<ContentType>({
     queryKey: ['tabnews-content', username, slug],
     queryFn: async () => {
       const res = await fetchTabnewsContentBySlug(username, slug)
