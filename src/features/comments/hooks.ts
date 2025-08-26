@@ -2,10 +2,10 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { fetchTabnewsContentComments } from './read'
-import { Comment } from './schemas'
+import { CommentType } from './schemas'
 
 export const useReadContentComments = (username: string, slug: string) => {
-  return useQuery<Comment[]>({
+  return useQuery<CommentType[]>({
     queryKey: ['tabnews-content-comments', username, slug],
     queryFn: async () => {
       const res = await fetchTabnewsContentComments(username, slug)

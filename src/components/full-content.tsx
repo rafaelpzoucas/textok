@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { UserBadge } from '@/components/user-badge'
 import { useReadContentComments } from '@/features/comments/hooks'
@@ -8,8 +8,10 @@ import { useReadContentBySlug } from '@/features/contents/hooks'
 import { cn } from '@/lib/utils'
 import { calculateReadingTime } from '@/utils/calculateReadingTime'
 import { formatTimeAgo } from '@/utils/timeAgo'
-import { ChevronDown, ChevronUp, Link, Share } from 'lucide-react'
+import { Link } from 'lucide-react'
 import { useQueryState } from 'nuqs'
+import { Comment } from './comment'
+import { ContentActions } from './content-actions'
 
 export function FullContent() {
   const [username] = useQueryState('username')
@@ -25,14 +27,12 @@ export function FullContent() {
     slug as string,
   )
 
-  console.log({ comments })
-
   const readingTime = content?.body ? calculateReadingTime(content.body) : null
 
   return (
     <div className="w-screen h-screen flex-shrink-0 snap-start flex items-center justify-center">
       <ScrollArea className="h-screen w-full rounded-md">
-        <div className="p-8 space-y-6 max-w-screen lg:max-w-2xl mx-auto">
+        <div className="p-8 space-y-6 max-w-screen lg:max-w-2xl mx-auto pb-32">
           <header className="flex flex-row items-center gap-2">
             <UserBadge username={content?.owner_username} />
 
@@ -49,7 +49,7 @@ export function FullContent() {
             {content?.body}
           </p>
 
-          <section className="border-t py-4">
+          <section className="border-b py-4">
             {content?.source_url && (
               <p className="flex flex-row items-center gap-2">
                 <Link className="w-4 h-4" />
@@ -67,49 +67,19 @@ export function FullContent() {
                 </a>
               </p>
             )}
+
+            <ContentActions content={content} />
           </section>
 
           <section className="space-y-10">
             {comments &&
               comments.length > 0 &&
               comments.map((comment) => (
-                <article
+                <Comment
                   key={comment.id}
-                  className="space-y-2 border-l border-muted-foreground/10 pl-4"
-                >
-                  <header className="flex flex-row items-center gap-2">
-                    <UserBadge username={comment?.owner_username} size="sm" />
-
-                    <span className="text-muted-foreground text-xs">
-                      {comment?.created_at
-                        ? formatTimeAgo(comment?.created_at)
-                        : ''}
-                    </span>
-                  </header>
-                  <p>{comment.body || ''}</p>
-
-                  <footer className="flex flex-row items-center justify-between mt-4">
-                    <Button variant="secondary">Responder</Button>
-
-                    <div className="space-x-2">
-                      <span>
-                        <Button variant="ghost" size="icon">
-                          <ChevronUp />
-                        </Button>
-                        <span className="px-1 text-primary">
-                          {comment.tabcoins}
-                        </span>
-                        <Button variant="ghost" size="icon">
-                          <ChevronDown />
-                        </Button>
-                      </span>
-
-                      <Button variant="ghost" size="icon">
-                        <Share />
-                      </Button>
-                    </div>
-                  </footer>
-                </article>
+                  comment={comment}
+                  opUsername={content.owner_username}
+                />
               ))}
           </section>
         </div>
