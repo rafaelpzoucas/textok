@@ -1,8 +1,10 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
 
 interface UseInfiniteScrollProps {
-  hasNextPage: boolean
-  isFetchingNextPage: boolean
+  hasNextPage?: boolean
+  isFetchingNextPage?: boolean
   fetchNextPage: () => void
 }
 
@@ -15,21 +17,21 @@ export function useInfiniteScroll({
 
   useEffect(() => {
     if (!loaderRef.current) return
-    const el = loaderRef.current
+    if (!hasNextPage) return
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const first = entries[0]
-        if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (entries[0].isIntersecting && !isFetchingNextPage) {
           fetchNextPage()
         }
       },
-      { threshold: 1 },
+      { rootMargin: '200px' }, // dispara um pouco antes do fim
     )
 
-    observer.observe(el)
+    observer.observe(loaderRef.current)
+
     return () => {
-      observer.unobserve(el)
+      observer.disconnect()
     }
   }, [loaderRef, hasNextPage, isFetchingNextPage, fetchNextPage])
 

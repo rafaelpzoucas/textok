@@ -1,40 +1,67 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
 
-interface UseActiveContentProps {
+interface UseActiveSnapProps {
+  containerRef: React.RefObject<HTMLElement | null>
   setUsername: (username: string | null) => void
   setSlug: (slug: string | null) => void
+  dataLength?: number // opcional, para recalcular quando novas páginas chegam
 }
 
-export function useActiveSnap({ setUsername, setSlug }: UseActiveContentProps) {
+export function useActiveSnap({
+  containerRef,
+  setUsername,
+  setSlug,
+  dataLength,
+}: UseActiveSnapProps) {
   const activeIdRef = useRef<string | null>(null)
 
   useEffect(() => {
-    const sections = document.querySelectorAll('section[data-id]')
+    const container = containerRef.current
+    if (!container) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-            const el = entry.target as HTMLElement
-            const id = el.dataset.id
-            if (id && id !== activeIdRef.current) {
-              activeIdRef.current = id
-              const [u, s] = id.split(':')
-              setUsername(u)
-              setSlug(s)
-            }
-          }
-        })
-      },
-      { threshold: [0.6] },
-    )
+    const getSections = () =>
+      Array.from(container.querySelectorAll<HTMLElement>('section[data-id]'))
 
-    sections.forEach((s) => observer.observe(s))
+    const updateActive = () => {
+      const mid = container.scrollTop + container.clientHeight / 2
+      const sections = getSections()
+      if (!sections.length) return
+
+      let bestEl: HTMLElement | null = null
+      let bestDist = Infinity
+
+      sections.forEach((el) => {
+        const top = el.offsetTop
+        const center = top + el.clientHeight / 2
+        const dist = Math.abs(center - mid)
+        if (dist < bestDist) {
+          bestDist = dist
+          bestEl = el
+        }
+      })
+
+      if (bestEl) {
+        // Correção: garantir que bestEl é um HTMLElement com dataset
+        const id =
+          (bestEl as HTMLElement & { dataset: DOMStringMap }).dataset.id || null
+        if (id && id !== activeIdRef.current) {
+          activeIdRef.current = id
+          const [u, s = ''] = id.split(':')
+          setUsername(u || null)
+          setSlug(s || null)
+        }
+      }
+    }
+
+    // Atualiza sempre que houver scroll
+    container.addEventListener('scroll', updateActive)
+    // Atualiza no mount
+    updateActive()
 
     return () => {
-      sections.forEach((s) => observer.unobserve(s))
+      container.removeEventListener('scroll', updateActive)
     }
-  }, [setUsername, setSlug])
-
-  return { activeIdRef }
+  }, [containerRef, setUsername, setSlug, dataLength]) // dataLength força recalcular ao carregar mais conteúdo
 }
