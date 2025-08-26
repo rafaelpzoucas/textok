@@ -1,6 +1,5 @@
 'use client'
 
-import { buttonVariants } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { UserBadge } from '@/components/user-badge'
 import { useReadContentComments } from '@/features/comments/hooks'
@@ -12,6 +11,7 @@ import { Link } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { Comment } from './comment'
 import { ContentActions } from './content-actions'
+import { Markdown } from './markdown'
 
 export function FullContent() {
   const [username] = useQueryState('username')
@@ -45,27 +45,26 @@ export function FullContent() {
 
           <h1 className="text-3xl font-bold">{content?.title}</h1>
 
-          <p className="text-2xl text-muted-foreground prose">
-            {content?.body}
-          </p>
+          <Markdown content={content?.body || ''} />
 
           <section className="border-b py-4">
             {content?.source_url && (
-              <p className="flex flex-row items-center gap-2">
-                <Link className="w-4 h-4" />
-                Fonte:{' '}
+              <div className="flex flex-col gap-2">
+                <span className="flex flex-row items-center gap-2">
+                  <Link className="w-4 h-4 text-muted-foreground" />
+                  Fonte:{' '}
+                </span>
                 <a
                   href={content?.source_url}
                   className={cn(
-                    buttonVariants({ variant: 'link' }),
-                    'px-0 font-bold',
+                    'px-0 font-bold break-all hyphens-auto text-left min-w-0 text-primary hover:text-primary/80',
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   {content?.source_url}
                 </a>
-              </p>
+              </div>
             )}
 
             <ContentActions content={content} />
@@ -78,7 +77,7 @@ export function FullContent() {
                 <Comment
                   key={comment.id}
                   comment={comment}
-                  opUsername={content.owner_username}
+                  opUsername={content?.owner_username}
                 />
               ))}
           </section>

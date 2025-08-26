@@ -1,6 +1,7 @@
 import { CommentType } from '@/features/comments/schemas'
 import { formatTimeAgo } from '@/utils/timeAgo'
 import { ContentActions } from './content-actions'
+import { Markdown } from './markdown'
 import { Badge } from './ui/badge'
 import { UserBadge } from './user-badge'
 
@@ -30,7 +31,7 @@ export function Comment({
           {comment?.created_at ? formatTimeAgo(comment?.created_at) : ''}
         </span>
       </header>
-      <p>{comment.body || ''}</p>
+      <Markdown content={comment?.body || ''} />
 
       <ContentActions content={comment} />
 

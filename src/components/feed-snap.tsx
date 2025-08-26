@@ -22,7 +22,7 @@ export const FeedSnap = forwardRef<HTMLDivElement, FeedSnapProps>(
       <section
         ref={ref}
         className="h-screen snap-start flex flex-col justify-center gap-12 p-8 border-b"
-        data-id={`${content.owner_username}:${content.slug}`}
+        data-id={`${content?.owner_username}:${content?.slug}`}
       >
         <UserBadge username={content?.owner_username} />
 
