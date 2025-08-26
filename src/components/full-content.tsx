@@ -1,12 +1,14 @@
 'use client'
 
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { UserBadge } from '@/components/user-badge'
+import { useReadContentComments } from '@/features/comments/hooks'
 import { useReadContentBySlug } from '@/features/contents/hooks'
 import { cn } from '@/lib/utils'
 import { calculateReadingTime } from '@/utils/calculateReadingTime'
 import { formatTimeAgo } from '@/utils/timeAgo'
+import { ChevronDown, ChevronUp, Link, Share } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 
 export function FullContent() {
@@ -17,6 +19,13 @@ export function FullContent() {
     username as string,
     slug as string,
   )
+
+  const { data: comments } = useReadContentComments(
+    username as string,
+    slug as string,
+  )
+
+  console.log({ comments })
 
   const readingTime = content?.body ? calculateReadingTime(content.body) : null
 
@@ -40,9 +49,10 @@ export function FullContent() {
             {content?.body}
           </p>
 
-          <footer className="border-t py-4">
+          <section className="border-t py-4">
             {content?.source_url && (
-              <p>
+              <p className="flex flex-row items-center gap-2">
+                <Link className="w-4 h-4" />
                 Fonte:{' '}
                 <a
                   href={content?.source_url}
@@ -57,7 +67,51 @@ export function FullContent() {
                 </a>
               </p>
             )}
-          </footer>
+          </section>
+
+          <section className="space-y-10">
+            {comments &&
+              comments.length > 0 &&
+              comments.map((comment) => (
+                <article
+                  key={comment.id}
+                  className="space-y-2 border-l border-muted-foreground/10 pl-4"
+                >
+                  <header className="flex flex-row items-center gap-2">
+                    <UserBadge username={comment?.owner_username} size="sm" />
+
+                    <span className="text-muted-foreground text-xs">
+                      {comment?.created_at
+                        ? formatTimeAgo(comment?.created_at)
+                        : ''}
+                    </span>
+                  </header>
+                  <p>{comment.body || ''}</p>
+
+                  <footer className="flex flex-row items-center justify-between mt-4">
+                    <Button variant="secondary">Responder</Button>
+
+                    <div className="space-x-2">
+                      <span>
+                        <Button variant="ghost" size="icon">
+                          <ChevronUp />
+                        </Button>
+                        <span className="px-1 text-primary">
+                          {comment.tabcoins}
+                        </span>
+                        <Button variant="ghost" size="icon">
+                          <ChevronDown />
+                        </Button>
+                      </span>
+
+                      <Button variant="ghost" size="icon">
+                        <Share />
+                      </Button>
+                    </div>
+                  </footer>
+                </article>
+              ))}
+          </section>
         </div>
       </ScrollArea>
     </div>
