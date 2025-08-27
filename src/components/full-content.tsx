@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { UserBadge } from '@/components/user-badge'
 import { useReadContentComments } from '@/features/comments/hooks'
 import { useReadContentBySlug } from '@/features/contents/hooks'
+import { User } from '@/features/users/schemas'
 import { cn } from '@/lib/utils'
 import { calculateReadingTime } from '@/utils/calculateReadingTime'
 import { formatTimeAgo } from '@/utils/timeAgo'
@@ -13,7 +14,7 @@ import { Comment } from './comment'
 import { ContentActions } from './content-actions'
 import { Markdown } from './markdown'
 
-export function FullContent() {
+export function FullContent({ user }: { user: User | null }) {
   const [username] = useQueryState('username')
   const [slug] = useQueryState('slug')
 
@@ -32,7 +33,7 @@ export function FullContent() {
   return (
     <div className="w-screen h-screen flex-shrink-0 snap-start flex items-center justify-center">
       <ScrollArea className="h-screen w-full rounded-md">
-        <div className="p-8 space-y-6 max-w-screen lg:max-w-2xl mx-auto pb-32">
+        <div className="p-6 space-y-6 max-w-screen lg:max-w-2xl mx-auto pb-32">
           <header className="flex flex-row items-center gap-2">
             <UserBadge username={content?.owner_username} />
 
@@ -47,7 +48,7 @@ export function FullContent() {
 
           <Markdown content={content?.body || ''} />
 
-          <section className="border-b py-4">
+          <section>
             {content?.source_url && (
               <div className="flex flex-col gap-2">
                 <span className="flex flex-row items-center gap-2">
@@ -67,10 +68,10 @@ export function FullContent() {
               </div>
             )}
 
-            <ContentActions content={content} />
+            <ContentActions content={content} user={user} />
           </section>
 
-          <section className="space-y-10">
+          <section className="">
             {comments &&
               comments.length > 0 &&
               comments.map((comment) => (
@@ -78,6 +79,7 @@ export function FullContent() {
                   key={comment.id}
                   comment={comment}
                   opUsername={content?.owner_username}
+                  user={user}
                 />
               ))}
           </section>

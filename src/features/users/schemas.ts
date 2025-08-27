@@ -1,10 +1,16 @@
 import { z } from 'zod'
 
-export const userSchema = z.object({
+export const UserSchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1).max(100),
   username: z.string(),
-  bio: z.string().max(255).optional(),
+  email: z.string().email(),
+  description: z.string().nullable().optional(), // vazio = "", mas deixei flexível
+  features: z.array(z.string()),
+  notifications: z.boolean(),
+  tabcash: z.number(),
+  tabcoins: z.number(),
+  created_at: z.string().datetime(), // ou z.coerce.date() se quiser Date
+  updated_at: z.string().datetime(),
 })
 
-export type UserType = z.infer<typeof userSchema>
+export type User = z.infer<typeof UserSchema>
