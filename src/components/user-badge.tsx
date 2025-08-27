@@ -11,7 +11,7 @@ export function UserBadge({
   return (
     <Badge
       className={cn(
-        'font-bold text-base bg-primary/10 text-primary',
+        'font-bold text-base bg-primary/20 text-primary',
         size === 'sm' && 'text-sm',
         size === 'md' && 'text-base px-3 py-1',
         size === 'lg' && 'text-lg px-5 py-2',

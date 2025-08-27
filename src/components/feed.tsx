@@ -17,7 +17,6 @@ import { useActiveSnap } from '../hooks/use-active-snap'
 import { useInfiniteScroll } from '../hooks/use-infinite-scroll'
 import { FeedSnap } from './feed-snap'
 import { FeedSnapSkeleton } from './feed-snap-skeleton'
-import { Strategy } from './strategy'
 
 export function Feed() {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -155,8 +154,6 @@ export function Feed() {
       ref={containerRef}
       className="w-screen h-screen flex-shrink-0 snap-start overflow-y-scroll snap-y snap-mandatory"
     >
-      <Strategy />
-
       {mergedContents.length > 0 ? (
         mergedContents.map((content, index) => {
           const isPenultimate = index === mergedContents.length - 2

@@ -1,17 +1,11 @@
 import { UserBadge } from '@/components/user-badge'
+import { ContentType } from '@/features/contents/schemas'
 import { calculateReadingTime } from '@/utils/calculateReadingTime'
+import { formatTimeAgo } from '@/utils/timeAgo'
 import { forwardRef } from 'react'
 
 interface FeedSnapProps {
-  content: {
-    id: string
-    title: string
-    owner_username: string
-    slug: string
-    tabcoins: number
-    children_deep_count: number
-    body?: string
-  }
+  content: ContentType
 }
 
 export const FeedSnap = forwardRef<HTMLDivElement, FeedSnapProps>(
@@ -21,12 +15,17 @@ export const FeedSnap = forwardRef<HTMLDivElement, FeedSnapProps>(
     return (
       <section
         ref={ref}
-        className="h-screen snap-start flex flex-col justify-center gap-12 p-8 border-b"
+        className="h-[calc(100vh_-_60px)] snap-start flex flex-col justify-center gap-12 p-8"
         data-id={`${content?.owner_username}:${content?.slug}`}
       >
-        <UserBadge username={content?.owner_username} />
+        <header className="space-x-4">
+          <UserBadge username={content?.owner_username} />
+          <span className="text-muted-foreground text-xs">
+            {content?.created_at ? formatTimeAgo(content?.created_at) : ''}
+          </span>
+        </header>
 
-        <h1 className="text-5xl font-bold text-left [word-break:break-word] [overflow-wrap:anywhere]">
+        <h1 className="text-5xl font-bold text-left [word-break:break-word] [overflow-wrap:anywhere] ">
           {content.title}
         </h1>
 
