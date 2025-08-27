@@ -3,7 +3,7 @@
 import { CommentType } from '@/features/comments/schemas'
 import { ContentType } from '@/features/contents/schemas'
 import { User } from '@/features/users/schemas'
-import { ChevronDown, ChevronUp, Reply, Share } from 'lucide-react'
+import { ArrowDown, ArrowUp, Reply, Share } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Button } from './ui/button'
 
@@ -30,15 +30,25 @@ export function ContentActions({
 
   return (
     <footer className="flex flex-row items-center justify-between mt-4 pb-4">
-      <span className="flex flex-row bg-secondary/50 rounded-md">
-        <Button variant="ghost" size="icon" onClick={handleTransactTabcoin}>
-          <ChevronUp />
+      <span className="flex flex-row bg-secondary/30 rounded-md">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleTransactTabcoin}
+          disabled
+        >
+          <ArrowUp />
         </Button>
         <div className="flex items-center justify-center px-1 text-primary font-bold w-8">
           {content?.tabcoins}
         </div>
-        <Button variant="ghost" size="icon" onClick={handleTransactTabcoin}>
-          <ChevronDown />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleTransactTabcoin}
+          disabled
+        >
+          <ArrowDown />
         </Button>
       </span>
 
@@ -47,6 +57,7 @@ export function ContentActions({
           variant="secondary"
           className="bg-secondary/50"
           onClick={handleReply}
+          disabled
         >
           <Reply />
           <span className="hidden md:block">Responder</span>
