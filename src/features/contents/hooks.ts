@@ -1,14 +1,10 @@
-import {
-  useInfiniteQuery,
-  useQuery,
-  UseQueryOptions,
-} from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { fetchTabnewsContentBySlug, fetchTabnewsContents } from './read'
 import { ContentType, StrategyType } from './schemas'
 
-export const useInfiniteContents = (strategy: StrategyType = 'relevant') => {
+export const useInfiniteContents = (strategy: StrategyType) => {
   return useInfiniteQuery<ContentType[], Error>({
-    queryKey: ['tabnews-contents-infinite', strategy], // Incluir strategy na queryKey
+    queryKey: ['tabnews-contents-infinite', strategy],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await fetchTabnewsContents(pageParam as number, strategy)
 
@@ -31,14 +27,11 @@ export const useInfiniteContents = (strategy: StrategyType = 'relevant') => {
   })
 }
 
-export const useReadContents = (
-  page: number,
-  strategy: StrategyType = 'relevant',
-) => {
+export const useReadContents = (page: number) => {
   return useQuery<ContentType[]>({
-    queryKey: ['tabnews-contents', page, strategy], // Incluir strategy na queryKey
+    queryKey: ['tabnews-contents', page],
     queryFn: async () => {
-      const res = await fetchTabnewsContents(page, strategy)
+      const res = await fetchTabnewsContents(page)
 
       if (Array.isArray(res)) {
         return res
@@ -51,12 +44,8 @@ export const useReadContents = (
   })
 }
 
-export const useReadContentBySlug = (
-  username: string,
-  slug: string,
-  options?: Omit<UseQueryOptions<ContentType, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<ContentType, Error>({
+export const useReadContentBySlug = (username: string, slug: string) => {
+  return useQuery<ContentType>({
     queryKey: ['tabnews-content', username, slug],
     queryFn: async () => {
       const res = await fetchTabnewsContentBySlug(username, slug)
@@ -69,6 +58,5 @@ export const useReadContentBySlug = (
     },
     enabled: !!username && !!slug,
     staleTime: 1000 * 60 * 10, // 10 minutos
-    ...options, // Spread das options passadas
   })
 }
