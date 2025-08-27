@@ -4,13 +4,13 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { fetchTabnewsContentBySlug, fetchTabnewsContents } from './read'
-import { ContentType } from './schemas'
+import { ContentType, StrategyType } from './schemas'
 
-export const useInfiniteContents = () => {
+export const useInfiniteContents = (strategy: StrategyType = 'relevant') => {
   return useInfiniteQuery<ContentType[], Error>({
-    queryKey: ['tabnews-contents-infinite'],
+    queryKey: ['tabnews-contents-infinite', strategy], // Incluir strategy na queryKey
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await fetchTabnewsContents(pageParam as number)
+      const res = await fetchTabnewsContents(pageParam as number, strategy)
 
       if (Array.isArray(res)) {
         return res
@@ -31,11 +31,14 @@ export const useInfiniteContents = () => {
   })
 }
 
-export const useReadContents = (page: number) => {
+export const useReadContents = (
+  page: number,
+  strategy: StrategyType = 'relevant',
+) => {
   return useQuery<ContentType[]>({
-    queryKey: ['tabnews-contents', page],
+    queryKey: ['tabnews-contents', page, strategy], // Incluir strategy na queryKey
     queryFn: async () => {
-      const res = await fetchTabnewsContents(page)
+      const res = await fetchTabnewsContents(page, strategy)
 
       if (Array.isArray(res)) {
         return res

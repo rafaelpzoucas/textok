@@ -1,16 +1,22 @@
+import { StrategyType } from './schemas'
+
 // Cache para requisições
 const requestCache = new Map<string, Promise<Response | unknown>>()
 
-export const fetchTabnewsContents = async (page: number) => {
-  const cacheKey = `contents-${page}`
+export const fetchTabnewsContents = async (
+  page: number,
+  strategy: StrategyType = 'relevant',
+) => {
+  // Incluir strategy na chave do cache para evitar conflitos
+  const cacheKey = `contents-${page}-${strategy}`
 
-  // Se já existe uma requisição em andamento para esta página, retorna ela
+  // Se já existe uma requisição em andamento para esta página e strategy, retorna ela
   if (requestCache.has(cacheKey)) {
     return requestCache.get(cacheKey)
   }
 
   const requestPromise = fetch(
-    `${process.env.NEXT_PUBLIC_TABNEWS_API_URL}/v1/contents?page=${page}&per_page=3&strategy=relevant`,
+    `${process.env.NEXT_PUBLIC_TABNEWS_API_URL}/v1/contents?page=${page}&per_page=3&strategy=${strategy}`,
     {
       headers: {
         Accept: 'application/json',
@@ -87,4 +93,23 @@ export const fetchTabnewsContentBySlug = async (
 // Função para limpar cache se necessário
 export const clearRequestCache = () => {
   requestCache.clear()
+}
+
+// Função para limpar cache específico por strategy (útil quando mudando filtros)
+export const clearContentsCacheByStrategy = (strategy?: StrategyType) => {
+  if (strategy) {
+    // Remove apenas caches da strategy específica
+    for (const key of requestCache.keys()) {
+      if (key.includes(`contents-`) && key.endsWith(`-${strategy}`)) {
+        requestCache.delete(key)
+      }
+    }
+  } else {
+    // Remove todos os caches de contents
+    for (const key of requestCache.keys()) {
+      if (key.startsWith('contents-')) {
+        requestCache.delete(key)
+      }
+    }
+  }
 }

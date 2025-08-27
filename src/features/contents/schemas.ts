@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+export const strategyEnum = z.enum(['relevant', 'new'])
+
 export const ContentSchema = z.object({
   id: z.string(),
   owner_id: z.string(),
@@ -39,3 +41,4 @@ export const UpdateContentSchema = CreateContentSchema.partial()
 
 export type CreateContentType = z.infer<typeof CreateContentSchema>
 export type UpdateContentType = z.infer<typeof UpdateContentSchema>
+export type StrategyType = z.infer<typeof strategyEnum>
