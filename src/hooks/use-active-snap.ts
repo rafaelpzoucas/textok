@@ -14,7 +14,12 @@ export function useActiveSnap({
   setUsername,
   setSlug,
   dataLength,
-}: UseActiveSnapProps) {
+  initialUsername,
+  initialSlug,
+}: UseActiveSnapProps & {
+  initialUsername: string | null
+  initialSlug: string | null
+}) {
   const activeIdRef = useRef<string | null>(null)
 
   useEffect(() => {
@@ -58,10 +63,12 @@ export function useActiveSnap({
     // Atualiza sempre que houver scroll
     container.addEventListener('scroll', updateActive)
     // Atualiza no mount
-    updateActive()
+    if (!initialUsername && !initialSlug) {
+      updateActive()
+    }
 
     return () => {
       container.removeEventListener('scroll', updateActive)
     }
-  }, [containerRef, setUsername, setSlug, dataLength]) // dataLength força recalcular ao carregar mais conteúdo
+  }, [containerRef, setUsername, setSlug, dataLength]) // eslint-disable-line react-hooks/exhaustive-deps
 }

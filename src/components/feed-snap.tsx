@@ -26,7 +26,9 @@ export const FeedSnap = forwardRef<HTMLDivElement, FeedSnapProps>(
       >
         <UserBadge username={content?.owner_username} />
 
-        <h1 className="text-5xl font-bold text-left">{content.title}</h1>
+        <h1 className="text-5xl font-bold text-left [word-break:break-word] [overflow-wrap:anywhere]">
+          {content.title}
+        </h1>
 
         <footer className="flex flex-col gap-2">
           <div className="flex items-center gap-1 text-xs text-muted-foreground">

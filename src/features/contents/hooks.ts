@@ -1,4 +1,8 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useQuery,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import { fetchTabnewsContentBySlug, fetchTabnewsContents } from './read'
 import { ContentType } from './schemas'
 
@@ -44,8 +48,12 @@ export const useReadContents = (page: number) => {
   })
 }
 
-export const useReadContentBySlug = (username: string, slug: string) => {
-  return useQuery<ContentType>({
+export const useReadContentBySlug = (
+  username: string,
+  slug: string,
+  options?: Omit<UseQueryOptions<ContentType, Error>, 'queryKey' | 'queryFn'>,
+) => {
+  return useQuery<ContentType, Error>({
     queryKey: ['tabnews-content', username, slug],
     queryFn: async () => {
       const res = await fetchTabnewsContentBySlug(username, slug)
@@ -58,5 +66,6 @@ export const useReadContentBySlug = (username: string, slug: string) => {
     },
     enabled: !!username && !!slug,
     staleTime: 1000 * 60 * 10, // 10 minutos
+    ...options, // Spread das options passadas
   })
 }

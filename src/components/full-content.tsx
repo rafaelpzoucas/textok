@@ -30,6 +30,10 @@ export function FullContent({ user }: { user: User | null }) {
 
   const readingTime = content?.body ? calculateReadingTime(content.body) : null
 
+  if (!content) {
+    return null
+  }
+
   return (
     <div className="w-screen h-screen flex-shrink-0 snap-start flex items-center justify-center">
       <ScrollArea className="h-screen w-full rounded-md">
