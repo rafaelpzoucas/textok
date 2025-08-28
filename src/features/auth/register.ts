@@ -8,7 +8,7 @@ export const register = async (data: UserRegisterData) => {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_TABNEWS_API_URL}/v1/users`,
+      `${process.env.NEXT_PUBLIC_TABNEWS_API_BASE_URL}/api/v1/users`,
       {
         method: 'POST',
         headers: {

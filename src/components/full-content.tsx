@@ -10,7 +10,7 @@ import { calculateReadingTime } from '@/utils/calculateReadingTime'
 import { formatTimeAgo } from '@/utils/timeAgo'
 import { Link } from 'lucide-react'
 import { useQueryState } from 'nuqs'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { Comment } from './comment'
 import { ContentActions } from './content-actions'
 import { Markdown } from './markdown'
@@ -28,7 +28,6 @@ export function FullContent({
 
   const [qUsername] = useQueryState('username')
   const [qSlug] = useQueryState('slug')
-  const [_page, setPage] = useQueryState('page', { defaultValue: 'feed' })
 
   const username = (qUsername as string) || (defaultUsername as string)
   const slug = (qSlug as string) || (defaultSlug as string)
@@ -41,31 +40,6 @@ export function FullContent({
   )
 
   const readingTime = content?.body ? calculateReadingTime(content.body) : null
-
-  useEffect(() => {
-    if (!fullContentRef.current) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (entry.isIntersecting) {
-          setPage('content')
-        } else {
-          setPage('feed')
-        }
-      },
-      {
-        root: null,
-        threshold: 0.6, // considera "ativo" só quando 60% visível
-      },
-    )
-
-    observer.observe(fullContentRef.current)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [setPage])
 
   if (!content) {
     return null

@@ -10,7 +10,7 @@ export const login = async (data: UserLoginData) => {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_TABNEWS_API_URL}/v1/sessions`,
+      `${process.env.NEXT_PUBLIC_TABNEWS_API_BASE_URL}/api/v1/sessions`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

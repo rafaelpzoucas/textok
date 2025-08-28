@@ -3,8 +3,9 @@
 import { CommentType } from '@/features/comments/schemas'
 import { ContentType } from '@/features/contents/schemas'
 import { User } from '@/features/users/schemas'
-import { ArrowDown, ArrowUp, Reply, Share } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Reply, Share } from 'lucide-react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { TabcoinButtons } from './tabcoin-buttons'
 import { Button } from './ui/button'
 
 export function ContentActions({
@@ -16,19 +17,19 @@ export function ContentActions({
 }) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const params = useParams()
 
-  const username = searchParams.get('username')
-  const slug = searchParams.get('slug')
+  const qUsername = searchParams.get('username') as string
+  const qSlug = searchParams.get('slug') as string
+  const pUsername = params.username as string
+  const pSlug = params.slug as string
+
+  const username = pUsername || qUsername
+  const slug = pSlug || qSlug
 
   function handleReply() {
     if (!user) {
       router.push('/login')
-    }
-  }
-
-  function handleTransactTabcoin() {
-    if (!user) {
-      router.push(`/login`)
     }
   }
 
@@ -39,7 +40,6 @@ export function ContentActions({
       try {
         await navigator.share({
           title: content?.title ?? 'Veja isso!',
-          text: content?.body ?? '',
           url,
         })
       } catch (err) {
@@ -54,27 +54,7 @@ export function ContentActions({
 
   return (
     <footer className="flex flex-row items-center justify-between mt-4 pb-4">
-      <span className="flex flex-row bg-secondary/30 rounded-md">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleTransactTabcoin}
-          disabled
-        >
-          <ArrowUp />
-        </Button>
-        <div className="flex items-center justify-center px-1 text-primary font-bold w-8">
-          {content?.tabcoins}
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleTransactTabcoin}
-          disabled
-        >
-          <ArrowDown />
-        </Button>
-      </span>
+      <TabcoinButtons user={user} content={content} />
 
       <div className="flex flex-row items-center gap-2">
         <Button
