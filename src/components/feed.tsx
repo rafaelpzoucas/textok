@@ -1,11 +1,12 @@
 // components/feed.tsx
-
 'use client'
 
 import { useInfiniteContents } from '@/features/contents/hooks'
 import { strategyEnum, StrategyType } from '@/features/contents/schemas'
 import { cn } from '@/lib/utils'
 import { useQueryState } from 'nuqs'
+import { useMemo, useRef } from 'react'
+import { useActiveSnap } from '../hooks/use-active-snap'
 import { FeedSnapList } from './feed-snap-list'
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 
@@ -20,6 +21,10 @@ export function Feed() {
     clearOnDefault: false,
   })
 
+  // username/slug controlados aqui
+  const [_username, setUsername] = useQueryState('username')
+  const [_slug, setSlug] = useQueryState('slug')
+
   const relevantQuery = useInfiniteContents('relevant', {
     enabled: strategy === 'relevant',
   })
@@ -27,17 +32,41 @@ export function Feed() {
     enabled: strategy === 'new',
   })
 
+  // Refs para cada lista
+  const relevantRef = useRef<HTMLDivElement | null>(null)
+  const newRef = useRef<HTMLDivElement | null>(null)
+
+  // Comprimentos para disparar recálculo quando chegar mais página
+  const relevantLength = useMemo(
+    () => relevantQuery.data?.pages.reduce((a, p) => a + p.length, 0) || 0,
+    [relevantQuery.data],
+  )
+  const newLength = useMemo(
+    () => newQuery.data?.pages.reduce((a, p) => a + p.length, 0) || 0,
+    [newQuery.data],
+  )
+
+  // Hook **único** apontando para o container visível
+  const activeRef = strategy === 'relevant' ? relevantRef : newRef
+  const activeLength = strategy === 'relevant' ? relevantLength : newLength
+
+  useActiveSnap({
+    containerRef: activeRef,
+    setUsername,
+    setSlug,
+    dataLength: activeLength,
+    strategy: strategy as StrategyType,
+  })
+
   const handleStrategyChange = (value: string) => {
     const result = strategyEnum.safeParse(value)
-    if (result.success) {
-      setStrategy(result.data)
-    }
+    if (result.success) setStrategy(result.data)
   }
 
   return (
     <div className="flex-none w-screen h-screen snap-center overflow-y-scroll">
       <Tabs
-        value={strategy}
+        value={strategy || 'relevant'}
         onValueChange={handleStrategyChange}
         className="h-full w-full"
       >
@@ -60,6 +89,7 @@ export function Feed() {
             )}
           >
             <FeedSnapList
+              ref={relevantRef}
               data={relevantQuery.data}
               fetchNextPage={relevantQuery.fetchNextPage}
               hasNextPage={relevantQuery.hasNextPage}
@@ -76,6 +106,7 @@ export function Feed() {
             )}
           >
             <FeedSnapList
+              ref={newRef}
               data={newQuery.data}
               fetchNextPage={newQuery.fetchNextPage}
               hasNextPage={newQuery.hasNextPage}

@@ -1,12 +1,14 @@
 'use client'
 
+import { StrategyType } from '@/features/contents/schemas'
 import { useEffect, useRef } from 'react'
 
 interface UseActiveSnapProps {
   containerRef: React.RefObject<HTMLElement | null>
   setUsername: (username: string | null) => void
   setSlug: (slug: string | null) => void
-  dataLength?: number // opcional, para recalcular quando novas páginas chegam
+  dataLength?: number
+  strategy: StrategyType
 }
 
 export function useActiveSnap({
@@ -14,6 +16,7 @@ export function useActiveSnap({
   setUsername,
   setSlug,
   dataLength,
+  strategy,
 }: UseActiveSnapProps) {
   const activeIdRef = useRef<string | null>(null)
 
@@ -63,5 +66,5 @@ export function useActiveSnap({
     return () => {
       container.removeEventListener('scroll', updateActive)
     }
-  }, [containerRef, setUsername, setSlug, dataLength]) // dataLength força recalcular ao carregar mais conteúdo
+  }, [containerRef, setUsername, setSlug, dataLength, strategy]) // dataLength força recalcular ao carregar mais conteúdo
 }
