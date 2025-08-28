@@ -1,20 +1,18 @@
 import { FullContent } from '@/components/full-content'
 import { Header } from '@/components/header'
 
-export default function ContentPage({
+export default async function ContentPage({
   params,
 }: {
-  params: { username: string; slug: string }
+  params: Promise<{ username: string; slug: string }>
 }) {
+  const { username, slug } = await params
+
   return (
     <div>
       <Header />
 
-      <FullContent
-        user={null}
-        defaultUsername={params.username}
-        defaultSlug={params.slug}
-      />
+      <FullContent user={null} defaultUsername={username} defaultSlug={slug} />
     </div>
   )
 }

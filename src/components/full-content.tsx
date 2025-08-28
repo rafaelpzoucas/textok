@@ -10,6 +10,7 @@ import { calculateReadingTime } from '@/utils/calculateReadingTime'
 import { formatTimeAgo } from '@/utils/timeAgo'
 import { Link } from 'lucide-react'
 import { useQueryState } from 'nuqs'
+import { useEffect, useRef } from 'react'
 import { Comment } from './comment'
 import { ContentActions } from './content-actions'
 import { Markdown } from './markdown'
@@ -23,13 +24,16 @@ export function FullContent({
   defaultUsername?: string
   defaultSlug?: string
 }) {
-  const [username] = useQueryState('username')
-  const [slug] = useQueryState('slug')
+  const fullContentRef = useRef<HTMLDivElement | null>(null)
 
-  const { data: content } = useReadContentBySlug(
-    defaultUsername ?? (username as string),
-    defaultSlug ?? (slug as string),
-  )
+  const [qUsername] = useQueryState('username')
+  const [qSlug] = useQueryState('slug')
+  const [_page, setPage] = useQueryState('page', { defaultValue: 'feed' })
+
+  const username = (qUsername as string) || (defaultUsername as string)
+  const slug = (qSlug as string) || (defaultSlug as string)
+
+  const { data: content } = useReadContentBySlug(username, slug)
 
   const { data: comments } = useReadContentComments(
     username as string,
@@ -38,22 +42,54 @@ export function FullContent({
 
   const readingTime = content?.body ? calculateReadingTime(content.body) : null
 
+  useEffect(() => {
+    if (!fullContentRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting) {
+          setPage('content')
+        } else {
+          setPage('feed')
+        }
+      },
+      {
+        root: null,
+        threshold: 0.6, // considera "ativo" só quando 60% visível
+      },
+    )
+
+    observer.observe(fullContentRef.current)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [setPage])
+
   if (!content) {
     return null
   }
 
   return (
-    <div className="w-screen h-screen flex-shrink-0 snap-start flex items-center justify-center">
+    <div
+      ref={fullContentRef}
+      className="w-screen h-screen flex-shrink-0 snap-start flex items-center justify-center"
+    >
       <ScrollArea className="h-screen w-full rounded-md">
         <div className="p-6 space-y-6 max-w-screen lg:max-w-2xl mx-auto pb-32">
-          <header className="flex flex-row items-center gap-2">
+          <header className="flex flex-col  gap-2">
             <UserBadge username={content?.owner_username} />
 
-            <span className="text-muted-foreground text-xs">{readingTime}</span>
-            <span className="text-muted-foreground text-xs">&bull;</span>
-            <span className="text-muted-foreground text-xs">
-              {content?.created_at ? formatTimeAgo(content?.created_at) : ''}
-            </span>
+            <div className="flex flex-row items-center gap-2">
+              <span className="text-muted-foreground text-xs">
+                {readingTime}
+              </span>
+              <span className="text-muted-foreground text-xs">&bull;</span>
+              <span className="text-muted-foreground text-xs">
+                {content?.created_at ? formatTimeAgo(content?.created_at) : ''}
+              </span>
+            </div>
           </header>
 
           <h1 className="text-3xl font-bold">{content?.title}</h1>

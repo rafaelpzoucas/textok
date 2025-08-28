@@ -11,6 +11,10 @@ import { FeedSnapList } from './feed-snap-list'
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 
 export function Feed() {
+  const [_page] = useQueryState('page')
+  const [_username, setUsername] = useQueryState('username')
+  const [_slug, setSlug] = useQueryState('slug')
+
   const [strategy, setStrategy] = useQueryState('strategy', {
     defaultValue: 'relevant' as StrategyType,
     parse: (value) => {
@@ -21,10 +25,6 @@ export function Feed() {
     clearOnDefault: false,
   })
 
-  // username/slug controlados aqui
-  const [_username, setUsername] = useQueryState('username')
-  const [_slug, setSlug] = useQueryState('slug')
-
   const relevantQuery = useInfiniteContents('relevant', {
     enabled: strategy === 'relevant',
   })
@@ -32,11 +32,9 @@ export function Feed() {
     enabled: strategy === 'new',
   })
 
-  // Refs para cada lista
   const relevantRef = useRef<HTMLDivElement | null>(null)
   const newRef = useRef<HTMLDivElement | null>(null)
 
-  // Comprimentos para disparar recálculo quando chegar mais página
   const relevantLength = useMemo(
     () => relevantQuery.data?.pages.reduce((a, p) => a + p.length, 0) || 0,
     [relevantQuery.data],
@@ -46,7 +44,6 @@ export function Feed() {
     [newQuery.data],
   )
 
-  // Hook **único** apontando para o container visível
   const activeRef = strategy === 'relevant' ? relevantRef : newRef
   const activeLength = strategy === 'relevant' ? relevantLength : newLength
 
