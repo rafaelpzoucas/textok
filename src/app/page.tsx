@@ -7,6 +7,7 @@ export default async function FeedPage() {
   return (
     <div className="flex flex-row w-screen h-screen snap-x snap-mandatory overflow-x-scroll">
       <Feed />
+
       <FullContent user={null} />
     </div>
   )

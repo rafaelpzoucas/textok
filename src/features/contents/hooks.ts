@@ -48,13 +48,9 @@ export const useReadContents = (page: number) => {
   })
 }
 
-export const useReadContentBySlug = (
-  username: string,
-  slug: string,
-  strategy: string,
-) => {
+export const useReadContentBySlug = (username: string, slug: string) => {
   return useQuery<ContentType>({
-    queryKey: ['tabnews-content', username, slug, strategy],
+    queryKey: ['tabnews-content', username, slug],
     queryFn: async () => {
       const res = await fetchTabnewsContentBySlug(username, slug)
 
@@ -64,7 +60,7 @@ export const useReadContentBySlug = (
 
       return res?.data
     },
-    enabled: !!username && !!slug && !!strategy,
+    enabled: !!username && !!slug,
     staleTime: 1000 * 60 * 10, // 10 minutos
   })
 }

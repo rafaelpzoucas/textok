@@ -14,15 +14,21 @@ import { Comment } from './comment'
 import { ContentActions } from './content-actions'
 import { Markdown } from './markdown'
 
-export function FullContent({ user }: { user: User | null }) {
+export function FullContent({
+  user,
+  defaultUsername,
+  defaultSlug,
+}: {
+  user: User | null
+  defaultUsername?: string
+  defaultSlug?: string
+}) {
   const [username] = useQueryState('username')
   const [slug] = useQueryState('slug')
-  const [strategy] = useQueryState('strategy')
 
   const { data: content } = useReadContentBySlug(
-    username as string,
-    slug as string,
-    strategy as string,
+    defaultUsername ?? (username as string),
+    defaultSlug ?? (slug as string),
   )
 
   const { data: comments } = useReadContentComments(

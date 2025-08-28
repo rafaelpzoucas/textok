@@ -19,7 +19,6 @@ export function ContentActions({
 
   const username = searchParams.get('username')
   const slug = searchParams.get('slug')
-  const strategy = searchParams.get('strategy')
 
   function handleReply() {
     if (!user) {
@@ -34,7 +33,7 @@ export function ContentActions({
   }
 
   async function handleShare() {
-    const url = `${window.location.origin}?username=${username}&slug=${slug}&strategy=${strategy}` // ajusta pro formato real da tua rota
+    const url = `${window.location.origin}/${username}/${slug}`
 
     if (navigator.share) {
       try {
@@ -93,7 +92,6 @@ export function ContentActions({
           size="icon"
           className="bg-secondary/50"
           onClick={handleShare}
-          disabled
         >
           <Share />
         </Button>
