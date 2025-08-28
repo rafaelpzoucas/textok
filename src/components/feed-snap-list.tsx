@@ -1,6 +1,6 @@
 'use client'
 
-import { ContentType, StrategyType } from '@/features/contents/schemas'
+import { ContentType } from '@/features/contents/schemas'
 import { InfiniteData } from '@tanstack/react-query'
 import { useQueryState } from 'nuqs'
 import { useRef } from 'react'
@@ -14,7 +14,6 @@ export function FeedSnapList({
   hasNextPage,
   isFetchingNextPage,
 }: {
-  strategy: StrategyType
   data?: InfiniteData<ContentType[], unknown>
   fetchNextPage: () => void
   hasNextPage?: boolean
@@ -23,6 +22,7 @@ export function FeedSnapList({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [_username, setUsername] = useQueryState('username')
   const [_slug, setSlug] = useQueryState('slug')
+  const [_strategy] = useQueryState('strategy')
 
   const { loaderRef } = useInfiniteScroll({
     hasNextPage,
@@ -30,10 +30,15 @@ export function FeedSnapList({
     fetchNextPage,
   })
 
-  // Passa dataLength para recalcular quando novas páginas chegam
-  const totalItems =
+  const dataLength =
     data?.pages.reduce((acc, page) => acc + page.length, 0) || 0
-  useActiveSnap({ containerRef, setUsername, setSlug, dataLength: totalItems })
+
+  useActiveSnap({
+    containerRef,
+    setUsername,
+    setSlug,
+    dataLength,
+  })
 
   return (
     <div

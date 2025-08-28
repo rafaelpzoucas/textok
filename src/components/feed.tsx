@@ -1,10 +1,13 @@
+// components/feed.tsx
+
 'use client'
 
 import { useInfiniteContents } from '@/features/contents/hooks'
 import { strategyEnum, StrategyType } from '@/features/contents/schemas'
+import { cn } from '@/lib/utils'
 import { useQueryState } from 'nuqs'
 import { FeedSnapList } from './feed-snap-list'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 
 export function Feed() {
   const [strategy, setStrategy] = useQueryState('strategy', {
@@ -17,18 +20,12 @@ export function Feed() {
     clearOnDefault: false,
   })
 
-  const {
-    data: relevantData,
-    fetchNextPage: relevantFetchNextPage,
-    hasNextPage: relevantHasNextPage,
-    isFetchingNextPage: relevantIsFetchingNextPage,
-  } = useInfiniteContents('relevant')
-  const {
-    data: newData,
-    fetchNextPage: newFetchNextPage,
-    hasNextPage: newHasNextPage,
-    isFetchingNextPage: newIsFetchingNextPage,
-  } = useInfiniteContents('new')
+  const relevantQuery = useInfiniteContents('relevant', {
+    enabled: strategy === 'relevant',
+  })
+  const newQuery = useInfiniteContents('new', {
+    enabled: strategy === 'new',
+  })
 
   const handleStrategyChange = (value: string) => {
     const result = strategyEnum.safeParse(value)
@@ -38,38 +35,55 @@ export function Feed() {
   }
 
   return (
-    <Tabs
-      defaultValue="relevant"
-      value={strategy}
-      onValueChange={handleStrategyChange}
-      className="h-full w-full"
-    >
-      <div className="fixed bottom-0 left-0 w-full z-50 p-4 flex">
-        <div className="bg-background w-fit mx-auto rounded-lg">
-          <TabsList>
-            <TabsTrigger value="relevant">Relevantes</TabsTrigger>
-            <TabsTrigger value="new">Recentes</TabsTrigger>
-          </TabsList>
+    <div className="flex-none w-screen h-screen snap-center overflow-y-scroll">
+      <Tabs
+        value={strategy}
+        onValueChange={handleStrategyChange}
+        className="h-full w-full"
+      >
+        <div className="fixed bottom-0 left-0 w-full z-50 p-4 flex">
+          <div className="bg-background w-fit mx-auto rounded-lg">
+            <TabsList>
+              <TabsTrigger value="relevant">Relevantes</TabsTrigger>
+              <TabsTrigger value="new">Recentes</TabsTrigger>
+            </TabsList>
+          </div>
         </div>
-      </div>
-      <TabsContent value="relevant">
-        <FeedSnapList
-          strategy="relevant"
-          data={relevantData}
-          fetchNextPage={relevantFetchNextPage}
-          hasNextPage={relevantHasNextPage}
-          isFetchingNextPage={relevantIsFetchingNextPage}
-        />
-      </TabsContent>
-      <TabsContent value="new">
-        <FeedSnapList
-          strategy="new"
-          data={newData}
-          fetchNextPage={newFetchNextPage}
-          hasNextPage={newHasNextPage}
-          isFetchingNextPage={newIsFetchingNextPage}
-        />
-      </TabsContent>
-    </Tabs>
+
+        <div className="h-full w-full relative">
+          <div
+            className={cn(
+              'absolute inset-0 transition-opacity duration-300',
+              strategy === 'relevant'
+                ? 'opacity-100'
+                : 'opacity-0 pointer-events-none',
+            )}
+          >
+            <FeedSnapList
+              data={relevantQuery.data}
+              fetchNextPage={relevantQuery.fetchNextPage}
+              hasNextPage={relevantQuery.hasNextPage}
+              isFetchingNextPage={relevantQuery.isFetchingNextPage}
+            />
+          </div>
+
+          <div
+            className={cn(
+              'absolute inset-0 transition-opacity duration-300',
+              strategy === 'new'
+                ? 'opacity-100'
+                : 'opacity-0 pointer-events-none',
+            )}
+          >
+            <FeedSnapList
+              data={newQuery.data}
+              fetchNextPage={newQuery.fetchNextPage}
+              hasNextPage={newQuery.hasNextPage}
+              isFetchingNextPage={newQuery.isFetchingNextPage}
+            />
+          </div>
+        </div>
+      </Tabs>
+    </div>
   )
 }

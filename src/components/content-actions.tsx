@@ -4,7 +4,7 @@ import { CommentType } from '@/features/comments/schemas'
 import { ContentType } from '@/features/contents/schemas'
 import { User } from '@/features/users/schemas'
 import { ArrowDown, ArrowUp, Reply, Share } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from './ui/button'
 
 export function ContentActions({
@@ -15,6 +15,11 @@ export function ContentActions({
   user: User | null
 }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const username = searchParams.get('username')
+  const slug = searchParams.get('slug')
+  const strategy = searchParams.get('strategy')
 
   function handleReply() {
     if (!user) {
@@ -25,6 +30,26 @@ export function ContentActions({
   function handleTransactTabcoin() {
     if (!user) {
       router.push(`/login`)
+    }
+  }
+
+  async function handleShare() {
+    const url = `${window.location.origin}?username=${username}&slug=${slug}&strategy=${strategy}` // ajusta pro formato real da tua rota
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: content?.title ?? 'Veja isso!',
+          text: content?.body ?? '',
+          url,
+        })
+      } catch (err) {
+        console.error('Erro ao compartilhar:', err)
+      }
+    } else {
+      // fallback: copia pro clipboard
+      await navigator.clipboard.writeText(url)
+      alert('Link copiado para a área de transferência!')
     }
   }
 
@@ -63,7 +88,13 @@ export function ContentActions({
           <span className="hidden md:block">Responder</span>
         </Button>
 
-        <Button variant="secondary" size="icon" className="bg-secondary/50">
+        <Button
+          variant="secondary"
+          size="icon"
+          className="bg-secondary/50"
+          onClick={handleShare}
+          disabled
+        >
           <Share />
         </Button>
       </div>

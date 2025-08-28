@@ -16,7 +16,7 @@ export const fetchTabnewsContents = async (
   }
 
   const requestPromise = fetch(
-    `${process.env.NEXT_PUBLIC_TABNEWS_API_URL}/v1/contents?page=${page}&per_page=3&strategy=${strategy}`,
+    `${process.env.NEXT_PUBLIC_TABNEWS_API_URL}/v1/contents?page=${page}&per_page=20&strategy=${strategy}`,
     {
       headers: {
         Accept: 'application/json',

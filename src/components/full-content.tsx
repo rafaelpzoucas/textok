@@ -17,10 +17,12 @@ import { Markdown } from './markdown'
 export function FullContent({ user }: { user: User | null }) {
   const [username] = useQueryState('username')
   const [slug] = useQueryState('slug')
+  const [strategy] = useQueryState('strategy')
 
   const { data: content } = useReadContentBySlug(
     username as string,
     slug as string,
+    strategy as string,
   )
 
   const { data: comments } = useReadContentComments(

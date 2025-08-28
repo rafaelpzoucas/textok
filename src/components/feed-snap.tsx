@@ -15,7 +15,7 @@ export const FeedSnap = forwardRef<HTMLDivElement, FeedSnapProps>(
     return (
       <section
         ref={ref}
-        className="h-[calc(100vh_-_60px)] snap-start flex flex-col justify-center gap-12 p-8"
+        className="h-dvh snap-start flex flex-col justify-center gap-12 p-8"
         data-id={`${content?.owner_username}:${content?.slug}`}
       >
         <header className="space-x-4">
