@@ -1,4 +1,4 @@
-export function calculateReadingTime(text: string, wpm = 200): string {
+export function calculateReadingTime(text: string, wpm = 260): string {
   if (!text) return '0 min'
 
   // remove markdown simples e quebras
