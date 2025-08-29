@@ -18,7 +18,7 @@ export const fetchAuthedUser = async () => {
   )
     .then(async (res) => {
       if (!res.ok) {
-        throw new Error(`Failed to fetch user: ${res.status} ${res.statusText}`)
+        return null
       }
 
       const data = await res.json()
