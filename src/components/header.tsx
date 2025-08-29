@@ -8,7 +8,7 @@ export function Header() {
   const router = useRouter()
 
   return (
-    <header className="flex flex-row items-center gap-4 p-4 px-6">
+    <header className="flex flex-row items-center gap-4 p-4 px-6 sticky top-0 z-50 bg-background">
       <Button variant="secondary" onClick={() => router.push('/')}>
         <ArrowLeft />
         <span>Feed</span>

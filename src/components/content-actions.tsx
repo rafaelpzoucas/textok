@@ -3,8 +3,9 @@
 import { CommentType } from '@/features/comments/schemas'
 import { ContentType } from '@/features/contents/schemas'
 import { User } from '@/features/users/schemas'
-import { Reply, Share } from 'lucide-react'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { Share } from 'lucide-react'
+import { useParams, useSearchParams } from 'next/navigation'
+import { ContentReply } from './content-reply'
 import { TabcoinButtons } from './tabcoin-buttons'
 import { Button } from './ui/button'
 
@@ -15,7 +16,6 @@ export function ContentActions({
   content?: ContentType | CommentType
   user: User | null
 }) {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const params = useParams()
 
@@ -26,12 +26,6 @@ export function ContentActions({
 
   const username = pUsername || qUsername
   const slug = pSlug || qSlug
-
-  function handleReply() {
-    if (!user) {
-      router.push('/login')
-    }
-  }
 
   async function handleShare() {
     const url = `${window.location.origin}/${username}/${slug}`
@@ -57,15 +51,7 @@ export function ContentActions({
       <TabcoinButtons user={user} content={content} />
 
       <div className="flex flex-row items-center gap-2">
-        <Button
-          variant="secondary"
-          className="bg-secondary/50"
-          onClick={handleReply}
-          disabled
-        >
-          <Reply />
-          <span className="hidden md:block">Responder</span>
-        </Button>
+        <ContentReply user={user} content={content} />
 
         <Button
           variant="secondary"

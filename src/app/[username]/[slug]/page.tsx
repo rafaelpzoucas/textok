@@ -1,5 +1,4 @@
 import { FullContent } from '@/components/full-content'
-import { Header } from '@/components/header'
 import { fetchAuthedUser } from '@/features/users/read'
 
 export default async function ContentPage({
@@ -12,10 +11,6 @@ export default async function ContentPage({
   const user = await fetchAuthedUser()
 
   return (
-    <div>
-      <Header />
-
-      <FullContent user={user} defaultUsername={username} defaultSlug={slug} />
-    </div>
+    <FullContent user={user} defaultUsername={username} defaultSlug={slug} />
   )
 }

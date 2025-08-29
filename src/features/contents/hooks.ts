@@ -1,6 +1,44 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { CreateContent, CreateContentData } from './create'
 import { fetchTabnewsContentBySlug, fetchTabnewsContents } from './read'
 import { ContentType, StrategyType } from './schemas'
+
+export function useCreateContent() {
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
+  return useMutation({
+    mutationFn: async (data: CreateContentData) => {
+      return await CreateContent(data)
+    },
+    onSuccess: (data) => {
+      // Invalidar queries dos conteúdos
+      queryClient.invalidateQueries({
+        queryKey: ['tabnews-contents-infinite', 'new'],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['tabnews-contents-infinite', 'relevant'],
+      })
+
+      // Redirecionar para o novo conteúdo criado
+      if (data?.owner_username && data?.slug) {
+        router.push(`/${data.owner_username}/${data.slug}`)
+      }
+
+      toast.success('Conteúdo publicado com sucesso!')
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao publicar conteúdo')
+    },
+  })
+}
 
 export const useInfiniteContents = (
   strategy: StrategyType,

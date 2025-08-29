@@ -35,6 +35,8 @@ export const CreateContentSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
   body: z.string().min(1, 'Corpo é obrigatório'),
   source_url: z.string().url().optional().or(z.literal('')),
+  status: z.string(),
+  type: z.string(),
 })
 
 export const UpdateContentSchema = CreateContentSchema.partial()

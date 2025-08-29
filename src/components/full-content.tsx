@@ -13,6 +13,7 @@ import { useQueryState } from 'nuqs'
 import { useRef } from 'react'
 import { Comment } from './comment'
 import { ContentActions } from './content-actions'
+import { Header } from './header'
 import { Markdown } from './markdown'
 
 export function FullContent({
@@ -51,6 +52,8 @@ export function FullContent({
       className="w-screen h-screen flex-shrink-0 snap-start flex items-center justify-center"
     >
       <ScrollArea className="h-screen w-full rounded-md">
+        {defaultUsername && defaultSlug && <Header />}
+
         <div className="p-6 space-y-6 max-w-screen lg:max-w-2xl mx-auto pb-32">
           <header className="flex flex-col  gap-2">
             <UserBadge username={content?.owner_username} />
