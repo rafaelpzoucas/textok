@@ -11,9 +11,15 @@ import { FeedSnapList } from './feed-snap-list'
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 
 export function Feed() {
-  const [_page] = useQueryState('page')
-  const [_username, setUsername] = useQueryState('username')
-  const [_slug, setSlug] = useQueryState('slug')
+  const [_page] = useQueryState('page', {
+    history: 'push',
+  })
+  const [_username, setUsername] = useQueryState('username', {
+    history: 'push',
+  })
+  const [_slug, setSlug] = useQueryState('slug', {
+    history: 'push',
+  })
 
   const [strategy, setStrategy] = useQueryState('strategy', {
     defaultValue: 'relevant' as StrategyType,
@@ -23,6 +29,7 @@ export function Feed() {
     },
     serialize: (value) => value,
     clearOnDefault: false,
+    history: 'push',
   })
 
   const relevantQuery = useInfiniteContents('relevant', {
