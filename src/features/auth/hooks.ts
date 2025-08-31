@@ -1,6 +1,6 @@
 'use client'
 
-import { TabNewsAPIError, TabNewsError } from '@/types/api-errors'
+import { TabNewsError } from '@/types/api-errors'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -47,15 +47,19 @@ export const useLogin = () => {
       try {
         const user = await fetchAuthedUser()
 
-        // Atualiza cache do React Query (para useAuthedUser)
+        // Atualiza cache do React Query
         queryClient.setQueryData(['authed-user'], user)
 
         // (opcional) persistir em localStorage
-        localStorage.setItem('user', JSON.stringify(user))
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(user))
+        }
 
         router.push('/')
       } catch (error) {
         console.error('Erro ao buscar usuário autenticado:', error)
+        // Ainda redireciona mesmo se não conseguir buscar o usuário
+        router.push('/')
       }
     },
     onError: (error) => {
@@ -63,45 +67,43 @@ export const useLogin = () => {
 
       if (error instanceof TabNewsError) {
         const { apiError } = error
+
         switch (apiError.name) {
           case 'UnauthorizedError':
             toast.error('Credenciais incorretas', {
               description: 'Verifique seu email e senha e tente novamente.',
             })
             break
+
           case 'ValidationError':
             toast.error('Dados inválidos', {
               description: apiError.action || 'Verifique os dados informados.',
             })
             break
+
           case 'TooManyRequestsError':
             toast.error('Muitas tentativas', {
               description: 'Aguarde alguns minutos antes de tentar novamente.',
             })
             break
+
+          case 'ServiceUnavailableError':
+            toast.error('Serviço indisponível', {
+              description:
+                'O TabNews está com alta demanda. Tente novamente em alguns minutos.',
+            })
+            break
+
           default:
-            toast.error(apiError.message, {
-              description: apiError.action,
+            toast.error(apiError.message || 'Erro ao fazer login', {
+              description: apiError.action || 'Tente novamente.',
             })
         }
       } else if (error instanceof Error) {
-        try {
-          const errorData = JSON.parse(error.message) as TabNewsAPIError
-          if (errorData.name === 'UnauthorizedError') {
-            toast.error('Credenciais incorretas', {
-              description: 'Verifique seu email e senha e tente novamente.',
-            })
-          } else {
-            toast.error(errorData.message || 'Erro ao fazer login', {
-              description: errorData.action || 'Verifique os dados informados.',
-            })
-          }
-        } catch {
-          toast.error('Erro ao fazer login', {
-            description:
-              error.message || 'Verifique sua conexão e tente novamente.',
-          })
-        }
+        toast.error('Erro ao fazer login', {
+          description:
+            error.message || 'Verifique sua conexão e tente novamente.',
+        })
       } else {
         toast.error('Erro ao fazer login', {
           description: 'Erro desconhecido. Tente novamente.',
