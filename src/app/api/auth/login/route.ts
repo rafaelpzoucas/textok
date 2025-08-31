@@ -1,7 +1,9 @@
 // app/api/auth/login/route.ts
 import { UserLoginSchema } from '@/features/auth/schemas'
+import { validateTurnstileToken } from 'next-turnstile'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,24 +24,23 @@ export async function POST(request: NextRequest) {
 
     const { email, password, turnstileToken } = validation.data
 
-    const cfRes = await fetch(
-      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `secret=${encodeURIComponent(process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY!)}&response=${encodeURIComponent(turnstileToken)}`,
-      },
-    )
-
-    const cfData = await cfRes.json()
-
-    if (!cfData.success) {
+    if (!turnstileToken) {
       return NextResponse.json(
-        {
-          name: 'CaptchaError',
-          message: 'Verificação de segurança falhou',
-          action: 'Tente novamente',
-        },
+        { message: 'Token Turnstile ausente' },
+        { status: 400 },
+      )
+    }
+
+    const turnstileValidation = await validateTurnstileToken({
+      token: turnstileToken,
+      secretKey: process.env.TURNSTILE_SECRET_KEY!,
+      idempotencyKey: uuidv4(),
+      sandbox: process.env.NODE_ENV === 'development',
+    })
+
+    if (!turnstileValidation.success) {
+      return NextResponse.json(
+        { message: 'Token Turnstile inválido' },
         { status: 400 },
       )
     }
