@@ -2,7 +2,7 @@ import { TabNewsError } from '@/types/api-errors'
 import { UserLoginData } from './schemas'
 
 export const login = async (data: UserLoginData) => {
-  const { email, password } = data
+  const { email, password, turnstileToken } = data
 
   try {
     const res = await fetch('/api/auth/login', {
@@ -10,7 +10,7 @@ export const login = async (data: UserLoginData) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, turnstileToken }),
       credentials: 'include', // Importante para cookies
     })
 

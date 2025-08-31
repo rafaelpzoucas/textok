@@ -20,7 +20,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { email, password } = validation.data
+    const { email, password, turnstileToken } = validation.data
+
+    const cfRes = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${encodeURIComponent(process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY!)}&response=${encodeURIComponent(turnstileToken)}`,
+      },
+    )
+
+    const cfData = await cfRes.json()
+
+    if (!cfData.success) {
+      return NextResponse.json(
+        {
+          name: 'CaptchaError',
+          message: 'Verificação de segurança falhou',
+          action: 'Tente novamente',
+        },
+        { status: 400 },
+      )
+    }
 
     // Faz a requisição para o TabNews com headers otimizados
     const response = await fetch(

@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
+import { Turnstile } from '@/components/turnstile'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,8 +16,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { useLogin } from '@/features/auth/hooks'
 import { UserLoginData, UserLoginSchema } from '@/features/auth/schemas'
+import { useState } from 'react'
 
 export function LoginForm() {
+  const [token, setToken] = useState<string | null>(null)
+
   const form = useForm<UserLoginData>({
     resolver: zodResolver(UserLoginSchema),
     defaultValues: {
@@ -28,7 +32,11 @@ export function LoginForm() {
   const { mutate } = useLogin()
 
   function onSubmit(values: UserLoginData) {
-    mutate(values)
+    if (!token) {
+      return
+    }
+
+    mutate({ ...values, turnstileToken: token })
   }
 
   return (
@@ -68,7 +76,14 @@ export function LoginForm() {
           )}
         />
 
-        <Button type="submit">Entrar</Button>
+        <Turnstile
+          siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY ?? ''}
+          onVerify={setToken}
+        />
+
+        <Button type="submit" disabled={!token}>
+          Entrar
+        </Button>
       </form>
     </Form>
   )
