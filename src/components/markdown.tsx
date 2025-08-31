@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils'
 import { remark } from 'remark'
 import html from 'remark-html'
 
-// Regex mais completa para detectar URLs
+// Regex para detectar URLs
 const URL_REGEX =
-  /(?<!href=["']|">)(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_~#?&=/]*))/g
+  /(?<!href=["']|">)(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}(?:[^\s]*))/g
 
 // Função para converter URLs em texto para links, evitando HTML existente
 function autoLinkUrls(htmlContent: string): string {
