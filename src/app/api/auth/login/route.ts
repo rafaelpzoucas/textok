@@ -33,9 +33,9 @@ export async function POST(request: NextRequest) {
 
     const turnstileValidation = await validateTurnstileToken({
       token: turnstileToken,
-      secretKey: process.env.TURNSTILE_SECRET_KEY!,
+      secretKey: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY!,
       idempotencyKey: uuidv4(),
-      sandbox: process.env.NODE_ENV === 'development',
+      sandbox: false,
     })
 
     if (!turnstileValidation.success) {

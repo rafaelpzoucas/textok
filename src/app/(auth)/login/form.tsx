@@ -10,24 +10,25 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useLogin } from '@/features/auth/hooks'
 import { UserLoginData, UserLoginSchema } from '@/features/auth/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Turnstile } from 'next-turnstile'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function LoginForm() {
   const [token, setToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
 
   const form = useForm<UserLoginData>({
     resolver: zodResolver(UserLoginSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  console.log(form.formState)
+  const { mutate } = useLogin()
+
+  const siteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY ?? ''
 
   const onSubmit = async (values: UserLoginData) => {
     if (!token) {
@@ -35,21 +36,7 @@ export function LoginForm() {
       return
     }
 
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ ...values, token }),
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      if (res.ok) {
-        router.push('/') // ou página pós-login
-      } else {
-        setError('Credenciais inválidas ou token Turnstile inválido')
-      }
-    } catch {
-      setError('Erro de conexão. Tente novamente.')
-    }
+    mutate(values)
   }
 
   return (
@@ -87,15 +74,17 @@ export function LoginForm() {
         />
 
         <Turnstile
-          siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
+          siteKey={siteKey}
           retry="auto"
           refreshExpired="auto"
-          sandbox={process.env.NODE_ENV === 'development'}
+          sandbox={false}
           onVerify={(token) => {
             setToken(token)
             form.setValue('turnstileToken', token)
           }}
-          onError={() => setError('Falha na verificação de segurança')}
+          onError={() => {
+            setError('Falha na verificação de segurança')
+          }}
           onExpire={() => setToken(null)}
         />
 
