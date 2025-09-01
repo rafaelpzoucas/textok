@@ -5,7 +5,7 @@ export const fetchTabnewsContents = async (
   strategy: StrategyType = 'relevant',
 ) => {
   const requestPromise = fetch(
-    `${process.env.NEXT_PUBLIC_TABNEWS_API_BASE_URL}/api/v1/contents?page=${page}&per_page=20&strategy=${strategy}`,
+    `${process.env.NEXT_PUBLIC_TABNEWS_API_BASE_URL}/api/v1/contents?page=${page}&per_page=30&strategy=${strategy}`,
     {
       headers: {
         Accept: 'application/json',

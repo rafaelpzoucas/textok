@@ -13,8 +13,8 @@ import { useQueryState } from 'nuqs'
 import { useRef } from 'react'
 import { Comment } from './comment'
 import { ContentActions } from './content-actions'
-import { Header } from './header'
 import { Markdown } from './markdown'
+import { Header } from './mobile-header'
 
 export function FullContent({
   user,
@@ -49,12 +49,12 @@ export function FullContent({
   return (
     <div
       ref={fullContentRef}
-      className="w-screen h-screen flex-shrink-0 snap-start flex items-center justify-center"
+      className="w-full h-screen flex-shrink-0 snap-start flex items-center justify-center"
     >
       <ScrollArea className="h-screen w-full rounded-md">
         {defaultUsername && defaultSlug && <Header />}
 
-        <div className="p-6 space-y-6 max-w-screen lg:max-w-2xl mx-auto pb-32">
+        <div className="p-6 space-y-6 max-w-screen lg:max-w-4xl mx-auto pb-32">
           <header className="flex flex-col  gap-2">
             <UserBadge username={content?.owner_username} />
 

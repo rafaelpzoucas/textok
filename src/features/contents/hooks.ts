@@ -69,11 +69,11 @@ export const useInfiniteContents = (
   })
 }
 
-export const useReadContents = (page: number) => {
+export const useReadContents = (page: number, strategy?: StrategyType) => {
   return useQuery<ContentType[]>({
-    queryKey: ['tabnews-contents', page],
+    queryKey: ['tabnews-contents', page, strategy],
     queryFn: async () => {
-      const res = await fetchTabnewsContents(page)
+      const res = await fetchTabnewsContents(page, strategy)
 
       if (Array.isArray(res)) {
         return res
