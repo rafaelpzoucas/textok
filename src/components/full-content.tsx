@@ -49,9 +49,9 @@ export function FullContent({
   return (
     <div
       ref={fullContentRef}
-      className="w-full h-screen flex-shrink-0 snap-start flex items-center justify-center"
+      className="w-full h-full flex-shrink-0 snap-start flex items-center justify-center"
     >
-      <ScrollArea className="h-screen w-full rounded-md">
+      <ScrollArea className="h-screen lg:h-[calc(100vh_-_65px)] w-full rounded-md">
         {defaultUsername && defaultSlug && <Header />}
 
         <div className="p-6 space-y-6 max-w-screen lg:max-w-4xl mx-auto pb-32">
