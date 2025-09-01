@@ -69,6 +69,7 @@ export function ContentReply({
           variant="secondary"
           className="bg-secondary/50"
           onClick={handleOpenDrawer}
+          disabled
         >
           <Reply />
           <span className="hidden sr-only">Responder</span>

@@ -99,7 +99,7 @@ export function TabcoinButtons({
 
   const isInAction = isPending || isAnimatingCredit || isAnimatingDebit
 
-  const disableButtons = isInAction || content?.status !== 'published'
+  const disableButtons = isInAction || content?.status !== 'published' || true
 
   return (
     <span className="flex flex-row bg-secondary/30 rounded-md relative">
