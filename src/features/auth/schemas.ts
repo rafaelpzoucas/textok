@@ -16,7 +16,6 @@ export const UserRegisterSchema = z.object({
 export const UserLoginSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
-  turnstileToken: z.string(),
 })
 
 export type UserRegisterData = z.infer<typeof UserRegisterSchema>

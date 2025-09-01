@@ -1,15 +1,12 @@
-// app/api/auth/login/route.ts
 import { UserLoginSchema } from '@/features/auth/schemas'
-import { validateTurnstileToken } from 'next-turnstile'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Valida os dados com Zod
+    // Valida email e senha com Zod
     const validation = UserLoginSchema.safeParse(body)
     if (!validation.success) {
       return NextResponse.json(
@@ -22,30 +19,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { email, password, turnstileToken } = validation.data
+    const { email, password } = validation.data
 
-    if (!turnstileToken) {
-      return NextResponse.json(
-        { message: 'Token Turnstile ausente' },
-        { status: 400 },
-      )
-    }
-
-    const turnstileValidation = await validateTurnstileToken({
-      token: turnstileToken,
-      secretKey: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY!,
-      idempotencyKey: uuidv4(),
-      sandbox: false,
-    })
-
-    if (!turnstileValidation.success) {
-      return NextResponse.json(
-        { message: 'Token Turnstile inválido' },
-        { status: 400 },
-      )
-    }
-
-    // Faz a requisição para o TabNews com headers otimizados
+    // Faz a requisição para o TabNews
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_TABNEWS_API_BASE_URL}/api/v1/sessions`,
       {
@@ -54,7 +30,6 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
           Accept: 'application/json',
           'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App/1.0)',
-          // Forward alguns headers do cliente original
           ...(request.headers.get('x-forwarded-for') && {
             'X-Forwarded-For': request.headers.get('x-forwarded-for')!,
           }),
@@ -68,7 +43,6 @@ export async function POST(request: NextRequest) {
 
     const responseText = await response.text()
 
-    // Verifica se é uma página HTML do Cloudflare
     if (
       responseText.includes('<!DOCTYPE html>') ||
       responseText.includes('<html')
@@ -108,7 +82,6 @@ export async function POST(request: NextRequest) {
       updated_at: string
     }
 
-    // Define o cookie de sessão
     const cookiesStore = await cookies()
     cookiesStore.set('session_id', sessionData.token, {
       httpOnly: true,
@@ -118,7 +91,6 @@ export async function POST(request: NextRequest) {
       path: '/',
     })
 
-    // Retorna apenas os dados necessários (sem expor o token)
     return NextResponse.json({
       id: sessionData.id,
       expires_at: sessionData.expires_at,
