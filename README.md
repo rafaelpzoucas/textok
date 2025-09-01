@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TexTok
 
-## Getting Started
+**TexTok** é uma rede social de textos inspirada no TikTok.  
+O objetivo é consumir conteúdos relevantes com a mesma fluidez de rolagem de vídeos curtos, mas apenas com texto.
 
-First, run the development server:
+## Motivação
+
+Ultimamente percebi que o excesso de vídeos curtos no TikTok deixava minha atenção cada vez mais dispersa.  
+Quando tento ler algo mais extenso e relevante, noto que passo por várias linhas sem absorver nada — como se meu cérebro tivesse sido treinado para pular rápido de um conteúdo raso para outro.  
+
+O TexTok nasceu como uma forma de **focar em conteúdos de qualidade**, de maneira simples e mobile-friendly.
+
+## Funcionalidades
+
+- Feed com **títulos em destaque**.
+- Arraste para o lado → para abrir o conteúdo completo.
+- Role para baixo para pular posts que não interessam.
+- Consumo de posts via API do [Tabnews](https://tabnews.com.br) (via curso.dev).
+
+## Tecnologias
+
+- **Front-end:** React, Next.js, Tailwind CSS
+- **Back-end:** (opcional para futuras features) Node.js / API REST
+- **Autenticação:** Ainda não implementada
+- **Controle de estado:** (Zustand ou Context API, se houver)
+- **Hospedagem:** (ex: Vercel)
+
+## Status do projeto
+
+- MVP funcional
+- Ainda faltam:
+  - Autenticação
+  - Features interativas (curtir, comentar)
+  - Melhorias de UX e performance
+
+## Como usar
+
+1. Clone o repositório:  
+```bash
+git clone https://github.com/rafaelpzoucas/textok.git
+````
+
+2. Instale as dependências:
+
+```bash
+npm install
+```
+
+3. Rode o projeto:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Abra [http://localhost:3000](http://localhost:3000) no navegador
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contribuindo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Se quiser contribuir:
 
-## Learn More
+1. Faça um fork do projeto
+2. Crie uma branch com sua feature: `git checkout -b minha-feature`
+3. Commit suas alterações: `git commit -m "feat: minha nova feature"`
+4. Push para a branch: `git push origin minha-feature`
+5. Abra um Pull Request
 
-To learn more about Next.js, take a look at the following resources:
+## Feedback
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Estou aberto a sugestões e críticas construtivas!
+Se tiver ideias de funcionalidades ou melhorias, fique à vontade para abrir uma issue ou PR.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Links
 
-## Deploy on Vercel
+* [Projeto no Tabnews](https://tabnews.com.br)
+* [GitHub do TexTok](https://github.com/rafaelpzoucas/textok)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Licença
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT © Rafael
