@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { fetchAuthedUser } from '../users/read'
-import { login } from './login'
 import { register } from './register'
 import { UserLoginData, UserRegisterData } from './schemas'
 
@@ -40,20 +39,19 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: async (data: UserLoginData) => {
-      // const res = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   body: JSON.stringify(data),
-      //   headers: { 'Content-Type': 'application/json' },
-      //   credentials: 'include',
-      // })
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      })
 
-      // if (!res.ok) {
-      //   const json = await res.json()
-      //   throw new TabNewsError(json) // ou seu erro customizado
-      // }
+      if (!res.ok) {
+        const json = await res.json()
+        throw new TabNewsError(json) // ou seu erro customizado
+      }
 
-      // return res.json()
-      login(data)
+      return res.json()
     },
     onSuccess: async () => {
       toast.success('Login realizado com sucesso!')
