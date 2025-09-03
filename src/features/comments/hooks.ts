@@ -7,7 +7,11 @@ import { CreateComment } from './create'
 import { fetchTabnewsContentComments } from './read'
 import { CommentType } from './schemas'
 
-export const useReadContentComments = (username: string, slug: string) => {
+export const useReadContentComments = (
+  username: string,
+  slug: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery<CommentType[]>({
     queryKey: ['tabnews-content-comments', username, slug],
     queryFn: async () => {
@@ -15,7 +19,7 @@ export const useReadContentComments = (username: string, slug: string) => {
       // Always return an array (fallback to empty array if undefined)
       return Array.isArray(res) ? res : []
     },
-    enabled: !!username && !!slug,
+    enabled: !!username && !!slug && (options?.enabled ?? true),
     staleTime: 1000 * 60 * 10,
   })
 }

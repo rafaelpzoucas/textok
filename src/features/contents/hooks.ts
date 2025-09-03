@@ -86,7 +86,11 @@ export const useReadContents = (page: number, strategy?: StrategyType) => {
   })
 }
 
-export const useReadContentBySlug = (username: string, slug: string) => {
+export const useReadContentBySlug = (
+  username: string,
+  slug: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery<ContentType>({
     queryKey: ['tabnews-content', username, slug],
     queryFn: async () => {
@@ -98,7 +102,7 @@ export const useReadContentBySlug = (username: string, slug: string) => {
 
       return res?.data
     },
-    enabled: !!username && !!slug,
+    enabled: !!username && !!slug && (options?.enabled ?? true),
     staleTime: 1000 * 60 * 10, // 10 minutos
   })
 }
